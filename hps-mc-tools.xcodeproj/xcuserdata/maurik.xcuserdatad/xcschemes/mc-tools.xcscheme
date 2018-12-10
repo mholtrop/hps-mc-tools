@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme
+   LastUpgradeVersion = "0940"
+   version = "1.3">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "40883B8220F0D897002561FC"
+               BuildableName = "lcio_info"
+               BlueprintName = "lcio_info"
+               ReferencedContainer = "container:hps-mc-tools.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4088393020EE54B6002561FC"
+               BuildableName = "e-gun"
+               BlueprintName = "e-gun"
+               ReferencedContainer = "container:hps-mc-tools.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "40A6662121ADA54800B73F20"
+               BuildableName = "emep-gun"
+               BlueprintName = "emep-gun"
+               ReferencedContainer = "container:hps-mc-tools.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <Testables>
+      </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "40883B8220F0D897002561FC"
+            BuildableName = "lcio_info"
+            BlueprintName = "lcio_info"
+            ReferencedContainer = "container:hps-mc-tools.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
+      <AdditionalOptions>
+      </AdditionalOptions>
+   </TestAction>
+   <LaunchAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "NO"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
+      allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "40883B8220F0D897002561FC"
+            BuildableName = "lcio_info"
+            BlueprintName = "lcio_info"
+            ReferencedContainer = "container:hps-mc-tools.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "/data/HPS/data/physrun2016/tpass2a/recon/hps_007800.0_recon_v11_18_18.slcio"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--verbose"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--nomap"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
+      <AdditionalOptions>
+      </AdditionalOptions>
+   </LaunchAction>
+   <ProfileAction
+      buildConfiguration = "Release"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "NO"
+      debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "40883B8220F0D897002561FC"
+            BuildableName = "lcio_info"
+            BlueprintName = "lcio_info"
+            ReferencedContainer = "container:hps-mc-tools.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </ProfileAction>
+   <AnalyzeAction
+      buildConfiguration = "Debug">
+   </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Release"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
+</Scheme>
