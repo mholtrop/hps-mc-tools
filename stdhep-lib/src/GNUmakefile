@@ -27,19 +27,19 @@ binlib:
 	-test -d $(STDHEP_DIR)/lib || mkdir -p $(STDHEP_DIR)/lib
 
 mcfio:
-	(cd mcfio/src; $(MAKE) $(DMAKE) all) > log.mcfio.$$$$ 2>&1
+	cd mcfio/src; $(MAKE) $(DMAKE) all
 
 stdhep:
-	(cd src/stdhep; $(MAKE) $(DMAKE) all) > log.stdhep.$$$$ 2>&1
+	cd src/stdhep; $(MAKE) $(DMAKE) all
 
 spin:
-	(cd src/display/spin; $(MAKE) $(DMAKE) all) > log.spin.$$$$ 2>&1
+	cd src/display/spin; $(MAKE) $(DMAKE) all
 
 util:
-	(cd src/display/util; $(MAKE) $(DMAKE) all) > log.util.$$$$ 2>&1
+	cd src/display/util; $(MAKE) $(DMAKE) all
 
 display:
-	(cd src/display; $(MAKE) $(DMAKE) all) > log.display.$$$$ 2>&1
+	cd src/display; $(MAKE) $(DMAKE) all
 
 clean:
 	rm -f log.*

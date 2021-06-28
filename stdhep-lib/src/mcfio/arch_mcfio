@@ -61,8 +61,8 @@ endif
 ifeq "$(UNAME)" "Darwin"
     CC=gcc
     F77=gfortran
-    CFLAGS= -arch x86_64 -arch i386 -fno-automatic -finit-local-zero -fno-second-underscore -fd-lines-as-comments $(DFLG) 
-    FFLAGS= -arch x86_64 -arch i386  -fno-automatic -finit-local-zero -fno-second-underscore -fd-lines-as-comments $(DFLG) 
+    CFLAGS= -fno-automatic -finit-local-zero -fno-second-underscore -fd-lines-as-comments $(DFLG)
+    FFLAGS= -fno-automatic -finit-local-zero -fno-second-underscore -fd-lines-as-comments $(DFLG)
     MXTLIBS = -lXm -lXt -lX11 -lm -lfor -lots
     MAP = 
 endif

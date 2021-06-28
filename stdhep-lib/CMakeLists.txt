@@ -1,22 +1,13 @@
-cmake_minimum_required(VERSION 3.0)
+#
+# Specify the minimum CMake version required.  If the cmake version
+# minimum is not met, cmake will fail.
+cmake_minimum_required(VERSION 3.5.0 FATAL_ERROR)
+cmake_policy(SET CMP0005 NEW)
+cmake_policy(SET CMP0042 NEW)
 
-project(stdhep-lib VERSION 5.6.1)
+# Set the name of the project
+project(hps-mc-tools)
 
-message(STATUS "StdHep library version: ${stdhep-lib_VERSION}")
+add_subdirectory(src/mcfio)
+add_subdirectory(src/src)
 
-file(COPY ${PROJECT_SOURCE_DIR}/src/ DESTINATION ${CMAKE_BINARY_DIR}/stdhep-src/)
-
-set(STDHEP_DIR ${CMAKE_BINARY_DIR}/stdhep-src)
-set(STDHEP_LIBRARY_DIR ${STDHEP_DIR}/lib)
-set(STDHEP_LIBRARIES ${STDHEP_LIBRARY_DIR}/libstdhep.a ${STDHEP_LIBRARY_DIR}/libstdhepC.a ${STDHEP_LIBRARY_DIR}/libFmcfio.a)
-
-set(STDHEP_DIR ${STDHEP_DIR} PARENT_SCOPE)
-set(STDHEP_LIBRARY_DIR ${STDHEP_LIBRARY_DIR} PARENT_SCOPE)
-set(STDHEP_LIBRARIES ${STDHEP_LIBRARIES} PARENT_SCOPE)
-
-add_custom_command(OUTPUT ${STDHEP_LIBRARIES} 
-    COMMAND make
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/stdhep-src"
-    DEPENDS "${CMAKE_BINARY_DIR}/stdhep-src")
-
-add_custom_target(stdhep_lib_build ALL DEPENDS ${STDHEP_LIBRARIES})
