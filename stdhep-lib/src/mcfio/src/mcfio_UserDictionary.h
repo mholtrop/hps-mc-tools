@@ -22,4 +22,4 @@ extern allMCFIO_UserBlockDecl *AllMCFIO_UserBlockDecl;
 ** otherwise return the point to the relevant title block.
 */
 char *mcfioC_UserBlockDescript(int blkNum);
-	
+void mcfioC_DefineUserBlock(int blkN, char *descr);

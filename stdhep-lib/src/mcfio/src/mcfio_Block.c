@@ -233,7 +233,7 @@ int mcfioC_NTuple(int stream, int nTupleId, char * version)
          str->xdr->x_op = XDR_ENCODE;
          if (ok == FALSE) {
              fprintf(stderr,
- "mcfio_NTuple: can not Encode or Decode Ntuple id % on Seq. Stream %d ", 
+ "mcfio_NTuple: can not Encode or Decode Ntuple id %d on Seq. Stream %d ",
              nTupleId, stream);
              return -1;
          }

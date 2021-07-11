@@ -212,13 +212,13 @@ static void lineparse()
   objname[0] = '\0';
   if (!strcmp(tok1,"end")) {strcpy(curstruct,"--"); in_template = 0;}
   if (!strcmp(tok1,"structure")) {strcpy(curstruct,tok2);}
-  if (!strcmp(tok1,"database")) ;
-  if (!strcmp(tok1,"incname")) ;
-  if (!strcmp(tok1,"index")) ;
-  if (!strcmp(tok1,"provide")) ;
-  if (!strcmp(tok1,"parent")) ;
-  if (!strcmp(tok1,"child")) ;
-  if (!strcmp(tok1,"dimension")) ;
+//  if (!strcmp(tok1,"database")) ;
+//  if (!strcmp(tok1,"incname")) ;
+//  if (!strcmp(tok1,"index")) ;
+//  if (!strcmp(tok1,"provide")) ;
+//  if (!strcmp(tok1,"parent")) ;
+//  if (!strcmp(tok1,"child")) ;
+//  if (!strcmp(tok1,"dimension")) ;
   if (!strcmp(tok1,"template")) {in_template = 1; strcpy(curstruct,tok2);
     n_instance = 0;}
   if (!strcmp(tok1,"command")) {in_template = 1; strcpy(curstruct,tok2);}

@@ -7,8 +7,10 @@
 *									       *
 *******************************************************************************/
 #include <stdio.h>
+#include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <sys/param.h>
 #include <limits.h>
 #include <time.h>
@@ -194,7 +196,10 @@ int mcfioC_EndDeclNTuples(int stream)
    ** Now we can try toto complete the file header. As it is now bigger, 
    ** and it is the first structure written, it is easier to start over.
    ** Destroy the XDR stream, close the file, and reopen it.
-   */  
+   */
+
+   void mcfioC_FreeStream(mcfStream **stream);
+
    xdr_destroy(str->xdr);
    fclose(str->filePtr);
    remove(str->filename);
@@ -243,6 +248,8 @@ int mcfioC_EndDeclNTuples(int stream)
    str->status = MCFIO_RUNNING;
    return (str->fhead->nNTuples);
 }
+
+void mcf_ntubldRead(char* fname);
 
 nTuDDL *mcf_GetFileNTuDDL(char*filename)
 {

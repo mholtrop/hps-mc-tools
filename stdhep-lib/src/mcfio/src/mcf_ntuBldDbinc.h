@@ -19,3 +19,4 @@
  * 
  */
 void mcf_ntubldRead(char* fname);
+void mcf_ntubldInit(void);

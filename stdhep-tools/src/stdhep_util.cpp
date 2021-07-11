@@ -161,7 +161,7 @@ int open_read(char *filename, int istream, int n_events)
 
 void open_write(char *filename, int ostream, int n_events)
 {
-	printf("Writing to %s; expecting %d events\n",filename, n_events);
+//	printf("Writing to %s; expecting %d events\n",filename, n_events);
 	if (xdr_init_done)
 		StdHepXdrWriteOpen(filename,filename,n_events,ostream);
 	else

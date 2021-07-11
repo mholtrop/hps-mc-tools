@@ -59,7 +59,6 @@
 extern nTuDDL **NTuDDLList;
 extern int NumOfNTuples;
 
-
 /* Static routine used in this module */
 
 static int mcfioC_gofornextevent(mcfStream *str);   
@@ -67,6 +66,8 @@ static int  mcfioC_nextspecevt(mcfStream *str, int inum, int istore,
                                        int irun, int itrig); 
 static int openReadDirect(char*filename, int mode);
 
+void    mcf_ComputeNTuOffsets(nTuDDL *ddl);
+void    mcf_ComputeNTuLengths(nTuDDL *ddl);
 
 int mcfioC_OpenReadDirect(char *filename)
 {                                            
@@ -446,6 +447,7 @@ int mcfioC_OpenWriteDirect(char *filename, char *title, char *comment,
 
 }
 
+int mcfioC_NextEventSequential(int stream);
 int mcfioC_NextEvent(int stream)
 /*
 ** The Core routine for getting or setting the next event d.s. from/to 

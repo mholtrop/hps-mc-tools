@@ -45,8 +45,8 @@ ifeq "$(UNAME)" "Darwin"
     CC=gcc
     CPP=gcc
     F77=gfortran
-    CFLAGS= $(DFLG) -arch x86_64 -arch i386 -fno-automatic -finit-local-zero -fno-second-underscore -fd-lines-as-comments -I/sw/include
-    FFLAGS= $(DFLG)  -arch x86_64 -arch i386 -fno-automatic -finit-local-zero -fno-second-underscore -fd-lines-as-comments
+    CFLAGS= $(DFLG)  -fno-automatic -finit-local-zero -fno-second-underscore -fd-lines-as-comments -I/sw/include
+    FFLAGS= $(DFLG)  -fno-automatic -finit-local-zero -fno-second-underscore -fd-lines-as-comments
     KPPFLAGS= -C -P -DUNIX
     LOCAL = -lSystem -ldl
     #BUILD_SHARED = true

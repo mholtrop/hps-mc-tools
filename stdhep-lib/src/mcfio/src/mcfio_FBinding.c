@@ -47,7 +47,9 @@ void mcfio_init_(void)
      mcfioC_Init();
 }
 
-void mcfio_rewind_(int *stream)
+void mcfioC_Rewind(int istream);
+
+        void mcfio_rewind_(int *stream)
 {
      mcfioC_Rewind(*stream);
 }
@@ -72,6 +74,7 @@ void mcfio_printdictionary_(void)
      mcfioC_PrintDictionary();
 }
 
+unsigned int mcfioC_InfoNumStream(int *istreams,  unsigned int nmax);
 unsigned int mcfio_infonumstream_(int *istreams, int *nmax)
 {
      return mcfioC_InfoNumStream(istreams, (unsigned int) *nmax);
@@ -146,15 +149,20 @@ void mcfio_getblockname_(int *blkId, char *answer, int length)
     free(aString);
 }
 
+#include "mcfio_UserDictionary.h"
 void mcfio_defineuserblock_(int *blkId, char *name,
                    bool_t xdr_filter, int *current_size, int length)
 {
     char *aString;
     
     aString = mallocNCopyMcfio(name, length);
-    mcfioC_DefineUserBlock(*blkId, aString, xdr_filter, current_size);
+//    mcfioC_DefineUserBlock(*blkId, aString, xdr_filter, current_size);
+    mcfioC_DefineUserBlock(*blkId, aString);
     free(aString);
 }
+
+int mcfioC_DeclareNtuple(int uid, char *title, char *category,
+                         int stream, char *filename);
 
 int mcfio_declarentuple_(int *uid, char*title, char *category,
                          int *stream, char *filename, int la, int lb, int lc)
@@ -170,22 +178,25 @@ int mcfio_declarentuple_(int *uid, char*title, char *category,
     return iret;    
 }
 
+int mcfioC_EndDeclNTuples(int stream);
 int mcfio_enddeclntuples_(int *stream)
 {
    return mcfioC_EndDeclNTuples(*stream);
 }
 
-
+int mcfioC_GetNTupleIds(int stream, int *ids, int max);
 int mcfio_getntupleids_(int *stream, int *ids, int *max)
 {    
     return mcfioC_GetNTupleIds(*stream, ids, *max);
-}    
+}
 
+int mcfioC_GetNTupleUID(int stream, int id);
 int mcfio_getntupleuid_(int *stream, int *id)
 {    
     return mcfioC_GetNTupleUID(*stream, *id);
 }
-    
+
+void mcfioC_GetNTupleCategory(int stream, int id, char **answer);
 int mcfio_getntuplecategory_(int *stream, int *id, char *category, int ll)
 { 
     int iret, lret;
@@ -195,8 +206,9 @@ int mcfio_getntuplecategory_(int *stream, int *id, char *category, int ll)
     if (ll > lret) strcpy(category, aString);
     else strncpy(category, aString, (ll-1));
     return lret;    
-}    
+}
 
+void mcfioC_GetNTupleTitle(int stream, int id, char **answer);
 int mcfio_getntupletitle_(int *stream, int *id, char *title, int ll)
 { 
     int iret, lret;
@@ -206,8 +218,9 @@ int mcfio_getntupletitle_(int *stream, int *id, char *title, int ll)
     if (ll > lret) strcpy(title, aString);
     else strncpy(title, aString, (ll-1));
     return lret;    
-}    
-   
+}
+
+void mcfioC_GetNTupleName(int stream, int id, char **answer);
 int mcfio_getntuplename_(int *stream, int *id, char *name, int ll)
 { 
     int iret, lret;
@@ -255,6 +268,7 @@ int mcfio_openreadsequential_(char *device, char *vsn,
     return iret;
 }
 
+void mcfioC_SetForSaveDecoding(int val);
 void mcfio_setforsavedecoding_(int *value)
 {
   mcfioC_SetForSaveDecoding(*value);

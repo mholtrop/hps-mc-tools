@@ -53,6 +53,8 @@ static bool_t xdr_mcfast_descrNTU(XDR *xdrs, char *version,
                                     descrGenNtuple *dNTu);
 static bool_t xdr_mcfast_varDescrNTU(XDR *xdrs, char *version,
                                     varGenNtuple *var);
+void mcfioC_Free_SeqHeader(mcfxdrSequentialHeader **p);
+void mcfioC_Free_EventHeader(mcfxdrEventHeader **p);
 
 extern nTuDDL **NTuDDLList;
 extern int NumOfNTuples;
@@ -100,7 +102,9 @@ bool_t xdr_mcfast_headerBlock(XDR *xdrs, int *blockid,
      return ( xdr_int(xdrs, blockid) && 
      	      xdr_int(xdrs, ntot) &&
      	      xdr_string(xdrs, version, MCF_XDR_VERSION_LENGTH));
-}   
+}
+
+void mcfioC_Free_FileHeader(mcfxdrFileHeader **p);
 bool_t xdr_mcfast_fileheader(XDR *xdrs, int *blockid,
  		 int *ntot, char** version, mcfxdrFileHeader **mcf,
  		  int streamId)
@@ -248,8 +252,9 @@ bool_t xdr_mcfast_fileheader(XDR *xdrs, int *blockid,
      } else return FALSE; /* Other Futur version encoded here. */
      return TRUE;
      	      
-}   
+}
 
+void mcfioC_Free_EventTable(mcfxdrEventTable **p);
 bool_t xdr_mcfast_eventtable(XDR *xdrs, int *blockid,
  		 int *ntot, char** version, mcfxdrEventTable **mcf)
 {
