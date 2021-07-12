@@ -26,6 +26,16 @@ include_directories( AFTER "${LCIO_INCLUDE_DIR}")
 add_subdirectory(stdhep-lib)
 include_directories(stdhep-lib/src/src/inc stdhep-tools/src)
 
+add_executable(stdhep-print src/stdhep_print.cpp stdhep-tools/src/stdhep_util.cpp)
+target_link_libraries(stdhep-print stdhepC mcfio)
+install(TARGETS stdhep-print)
+
+
+add_executable(particle-trainer src/particle-trainer.cpp stdhep-tools/src/stdhep_util.cpp)
+target_link_libraries(particle-trainer stdhepC mcfio)
+install(TARGETS particle-trainer)
+
+
 add_executable(particle-gun src/particle-gun.cpp stdhep-tools/src/stdhep_util.cpp)
 target_link_libraries(particle-gun stdhepC mcfio)
 install(TARGETS particle-gun)
