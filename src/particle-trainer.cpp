@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
             temp->vhep[1]= 0; // Vertex-y;
             temp->vhep[2]= 0; // Vertex-z;
             temp->vhep[3]= 0; // Production time;
-            temp->phep[0]=  // Momentum-x;
+            temp->phep[0]= momentum*sin(theta)*cos(phi); // Momentum-x;
             temp->phep[1]= momentum*sin(theta)*sin(phi); // Momentum-y;
             temp->phep[2]= momentum*cos(theta); // Momentum-z;
             temp->phep[3]= sqrt(momentum*momentum+part_mass*part_mass); // Energy;
