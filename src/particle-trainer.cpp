@@ -63,6 +63,7 @@ int main(int argc, char **argv) {
     }
 
     int ostream = 0;
+    int debug = args["debug"].as<int>();
     string outputfile = args["outputfile"].as<std::string>();
     long nevent = args["num_evt"].as<long>();
     int  part_types = args["part"].as<int>();
@@ -93,19 +94,26 @@ int main(int argc, char **argv) {
 
     for(int i=0; i < nevent; ++i){
 
-        double momentum = momentum_dis(gen);
-        double x        = x_dis(gen);
-        double y        = y_dis(gen);
-        if( one(gen) < 0.5) y = -y;
-        // double r        = sqrt(x*x+y*y+150.*150.);
-        double theta    = atan2(x,150.) + rot/1000.;  // theta=arccos(z/r) rotated 32.5 mrad to +x
-        double phi      = atan2(y,x);
-
         evt.nevhep=i+1;
         int n_particles = choose_num(gen);
         for( int n=0; n< n_particles; ++n){
             int i_part = choose_part(gen);
             double part_mass = particle_mass[i_part];
+            double momentum = momentum_dis(gen);
+            double x        = x_dis(gen);
+            double y        = y_dis(gen);
+            if( one(gen) < 0.5) y = -y;
+            double rxy        = sqrt(x*x+y*y);
+            double theta = atan2(rxy, 150.);
+            double phi   = atan2(y,x);
+            double px = momentum*sin(theta)*cos(phi);
+            double py = momentum*sin(theta)*sin(phi);
+            double pz = momentum*cos(theta);
+            px = px*cos(rot/1000.) + pz*sin(rot/1000.);
+            pz = -px*sin(rot/1000.) + pz*cos(rot/1000.);
+            double theta_x    = atan2(x,150.) + rot/1000.;  // theta=arccos(z/r) rotated 32.5 mrad to +x
+            double theta_y    = atan2(y,150.);
+
             temp->isthep=1;  // Final state particle.
             temp->idhep=particle_ids[i_part];  // PID - electron = 11
             temp->jmohep[0]=0; // Position of mother particle in list.
@@ -116,11 +124,14 @@ int main(int argc, char **argv) {
             temp->vhep[1]= 0; // Vertex-y;
             temp->vhep[2]= 0; // Vertex-z;
             temp->vhep[3]= 0; // Production time;
-            temp->phep[0]= momentum*sin(theta)*cos(phi); // Momentum-x;
-            temp->phep[1]= momentum*sin(theta)*sin(phi); // Momentum-y;
-            temp->phep[2]= momentum*cos(theta); // Momentum-z;
+            temp->phep[0]= px; // Momentum-x = momentum*sin(theta)*cos(phi);
+            temp->phep[1]= py; // Momentum-y = momentum*sin(theta)*sin(phi);
+            temp->phep[2]= pz; // Momentum-z = momentum*cos(theta);
             temp->phep[3]= sqrt(momentum*momentum+part_mass*part_mass); // Energy;
             temp->phep[4]= part_mass; // Mass;
+            if(debug>0) printf("(x,y): (%7.2f, %7.2f)  (tht,phi): (%7.3f, %7.3f) p=(%7.3f, %7.3f, %7.3f)\n",
+                               x,y,theta,phi,temp->phep[0],temp->phep[1],temp->phep[2]);
+
             evt.particles.push_back(*temp);
         }
 
