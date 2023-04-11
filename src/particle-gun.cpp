@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
     long nevent = args["num_evt"].as<long>();
     int  part_type = args["part"].as<int>();
     double part_mass = args["mass"].as<double>();
-    double momentum_low = args["min"].as<double>(); // GeV
+    double momentum_min = args["min"].as<double>(); // GeV
     double momentum_max = args["max"].as<double>(); // GeV
     double x_min = args["xmin"].as<double>();     // cm @ 150 cm - a little inside the ECAL
     double x_max = args["xmax"].as<double>();     // cm @ 150 cm - a little inside the ECAL
@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
     // Seed with a real random value, if available
     std::random_device rd;  //Will be used to obtain a seed for the random number engine
     std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
-    std::uniform_real_distribution<> momentum_dis(momentum_low, momentum_max);
+    std::uniform_real_distribution<> momentum_dis(momentum_min, momentum_max);
     std::uniform_real_distribution<> x_dis(x_min,x_max);
     std::uniform_real_distribution<> y_dis(y_min,y_max);
     std::uniform_real_distribution<> one(0.,1.);

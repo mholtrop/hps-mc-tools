@@ -57,7 +57,7 @@ int copy_stdevent_( void )
         hepevt_.jdahep[nh+i][1] = stdevent_.jdahep2[i];
         for (k = 0; k < 4; k++)
             hepevt_.phep[nh+i][k] = stdevent_.phep[i][k];
-        hepevt_.phep[nh+i][5] = stdevent_.mass[i];
+        hepevt_.phep[nh+i][4] = stdevent_.mass[i];            /* Appears to be an error, 5 is past array size. Changed to 4, 4/11/2023 MWH */
         for (k = 0; k < 4; k++)
             hepevt_.vhep[nh+i][k] = stdevent_.vcr[i][k];
         hepev2_.jmulti[nh+i] = stdevent_.jcol[i];

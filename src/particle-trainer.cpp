@@ -28,8 +28,18 @@ int main(int argc, char **argv) {
 //  const double pi=3.141592653589793;
 
     setlocale(LC_NUMERIC, "");
-    cxxopts::Options options(argv[0], ". This program will send n"
-                                      " particles of different types to a stdhep file.");
+    cxxopts::Options options(argv[0], "This program will send n"
+                                      " particles of different types to a stdhep file. \n"
+                                      " The combination of the --part  and --nmax option determines the mix of partices. \n"
+                                      " --nmax n, determines the maximum number of particles in the event. \n"
+                                      " --part p, determines the mix of particles: \n"
+                                      "     p=1 through 7 : Only e-, e+, gamma, pi+, pi-, mu-, mu+ respectively. \n"
+                                      "     p=8 : e- and e+ \n"
+                                      "     p=9 : e-, e+, gamma. \n"
+                                      "     p=10 : any particle. \n"
+                                      "Examples:  \n"
+                                      " particle-trainer -part 1 -n 1000 electron_1k.stdhep # create file with 1000 e- events.\n"
+                                      " particle-trainer -part 9 -nmax 5 -n 1000 mix_1k.stdhep # 1000 e-, e+, gamma events, with up to 5 particles per event. \n");
     options
             .positional_help(" outfile - Output file.")
             .show_positional_help();
@@ -39,15 +49,15 @@ int main(int argc, char **argv) {
     options
             .add_options()
                     ("d,debug", "Set debug level", cxxopts::value<int>()->default_value("0"))
-                    ("p,part",  "Set particle type mix [default: 1]", cxxopts::value<int>()->default_value("1"))
-                    ("nmax",  "Set max number of particles per event [default: 1]", cxxopts::value<int>()->default_value("1"))
-                    ("pmin",  "Set minimum momentum [default: 0.1]", cxxopts::value<double>()->default_value("0.01"))
-                    ("pmax",  "Set maximum momentum [default: 2.3]", cxxopts::value<double>()->default_value("4.6"))
-                    ("xmin",  "Set minimum x at 150cm (Ecal) [default: -42.]", cxxopts::value<double>()->default_value("-42."))
-                    ("xmax",  "Set maximum x at 150cm (Ecal) [default: 42.]", cxxopts::value<double>()->default_value("42."))
-                    ("ymin",  "Set minimum y at 150cm (Ecal) [default: 1.]", cxxopts::value<double>()->default_value("1."))
-                    ("ymax",  "Set maximum y at 150cm (Ecal) [default: 10.]", cxxopts::value<double>()->default_value("10."))
-                    ("rot",   "Set beam rotation [default: 32.5 mrad]", cxxopts::value<double>()->default_value("32.5"))
+                    ("p,part",  "Set particle type mix. See above.", cxxopts::value<int>()->default_value("1"))
+                    ("nmax",  "Set max number of particles per event.", cxxopts::value<int>()->default_value("1"))
+                    ("pmin",  "Set minimum momentum.", cxxopts::value<double>()->default_value("0.01"))
+                    ("pmax",  "Set maximum momentum.", cxxopts::value<double>()->default_value("4.6"))
+                    ("xmin",  "Set minimum x at 150cm (Ecal).", cxxopts::value<double>()->default_value("-45."))
+                    ("xmax",  "Set maximum x at 150cm (Ecal).", cxxopts::value<double>()->default_value("45."))
+                    ("ymin",  "Set minimum y at 150cm (Ecal).", cxxopts::value<double>()->default_value("1."))
+                    ("ymax",  "Set maximum y at 150cm (Ecal).", cxxopts::value<double>()->default_value("10."))
+                    ("rot",   "Set beam rotation.", cxxopts::value<double>()->default_value("32.5"))
 
                     ("o,outputfile", "Output files (-o is optional) ", cxxopts::value<std::string>()->default_value("gun.stdhep"))
                     ("n,num_evt","Only process num_evt event [default:100000]", cxxopts::value<long>()->default_value("100000"))
@@ -78,10 +88,26 @@ int main(int argc, char **argv) {
 
     open_write((char *)outputfile.c_str(),ostream,nevent);
 
-    vector<int> particle_ids = {   11,    -11,  22,  211,  -211,  13,  -13 }; // e- e+, gamma, pi+, pi-, mu-, mu+
+    vector<int> particle_types_available = { 11, -11, 22, 211, -211, 13, -13 }; // e- e+, gamma, pi+, pi-, mu-, mu+
     vector<double> particle_mass = {0.000510998946, 0.000510998946, 0. , 0.13957039, 0.13957039, 0.1056583745, 0.1056583745};
 
-    if( part_types > particle_ids.size())  part_types = particle_ids.size();
+   vector<int> particle_indexes_to_choose_from;
+    if(part_types >= 1 && part_types <= 7){
+       particle_indexes_to_choose_from.push_back(part_types - 1);
+    }else if(part_types == 8){
+       particle_indexes_to_choose_from.push_back(particle_types_available[0]);
+       particle_indexes_to_choose_from.push_back(particle_types_available[1]);
+    }else if(part_types == 9){
+       particle_indexes_to_choose_from.push_back(particle_types_available[0]);
+       particle_indexes_to_choose_from.push_back(particle_types_available[1]);
+       particle_indexes_to_choose_from.push_back(particle_types_available[2]);
+    }else if(part_types == 10){
+       for(size_t j=0; j<particle_types_available.size(); ++j) particle_indexes_to_choose_from.push_back(j);
+    }else{
+       printf("ERROR -- We do not know about your choise for --part. \n");
+       return(1);
+    }
+
     // Seed with a real random value, if available
     std::random_device rd;  //Will be used to obtain a seed for the random number engine
     std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
@@ -90,14 +116,14 @@ int main(int argc, char **argv) {
     std::uniform_real_distribution<> y_dis(y_min,y_max);
     std::uniform_real_distribution<> one(0.,1.);
     std::uniform_int_distribution<>  choose_num(1,nmax);
-    std::uniform_int_distribution<>  choose_part(0., part_types-1);
+    std::uniform_int_distribution<>  choose_part(0, (int)particle_indexes_to_choose_from.size());
 
     for(int i=0; i < nevent; ++i){
 
         evt.nevhep=i+1;
         int n_particles = choose_num(gen);
         for( int n=0; n< n_particles; ++n){
-            int i_part = choose_part(gen);
+            int i_part = particle_indexes_to_choose_from[choose_part(gen)];
             double part_mass = particle_mass[i_part];
             double momentum = momentum_dis(gen);
             double x        = x_dis(gen);
@@ -115,7 +141,7 @@ int main(int argc, char **argv) {
             double theta_y    = atan2(y,150.);
 
             temp->isthep=1;  // Final state particle.
-            temp->idhep=particle_ids[i_part];  // PID - electron = 11
+            temp->idhep=particle_indexes_to_choose_from[i_part];  // PID - electron = 11
             temp->jmohep[0]=0; // Position of mother particle in list.
             temp->jmohep[1]=0; // Position of second mother particle in list.
             temp->jdahep[0]=0; // Position of daughter particle in list.
