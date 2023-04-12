@@ -95,12 +95,12 @@ int main(int argc, char **argv) {
     if(part_types >= 1 && part_types <= 7){
        particle_indexes_to_choose_from.push_back(part_types - 1);
     }else if(part_types == 8){
-       particle_indexes_to_choose_from.push_back(particle_types_available[0]);
-       particle_indexes_to_choose_from.push_back(particle_types_available[1]);
+       particle_indexes_to_choose_from.push_back(0);
+       particle_indexes_to_choose_from.push_back(1);
     }else if(part_types == 9){
-       particle_indexes_to_choose_from.push_back(particle_types_available[0]);
-       particle_indexes_to_choose_from.push_back(particle_types_available[1]);
-       particle_indexes_to_choose_from.push_back(particle_types_available[2]);
+       particle_indexes_to_choose_from.push_back(0);
+       particle_indexes_to_choose_from.push_back(1);
+       particle_indexes_to_choose_from.push_back(2);
     }else if(part_types == 10){
        for(size_t j=0; j<particle_types_available.size(); ++j) particle_indexes_to_choose_from.push_back(j);
     }else{
@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
         evt.nevhep=i+1;
         int n_particles = choose_num(gen);
         for( int n=0; n< n_particles; ++n){
-            int i_part = particle_indexes_to_choose_from[choose_part(gen)];
+            int i_part = choose_part(gen);
             double part_mass = particle_mass[i_part];
             double momentum = momentum_dis(gen);
             double x        = x_dis(gen);
