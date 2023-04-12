@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
         evt.nevhep=i+1;
         int n_particles = choose_num(gen);
         for( int n=0; n< n_particles; ++n){
-            int i_part = choose_part(gen);
+            int i_part = particle_indexes_to_choose_from[choose_part(gen)];
             double part_mass = particle_mass[i_part];
             double momentum = momentum_dis(gen);
             double x        = x_dis(gen);
@@ -141,7 +141,7 @@ int main(int argc, char **argv) {
             double theta_y    = atan2(y,150.);
 
             temp->isthep=1;  // Final state particle.
-            temp->idhep=particle_indexes_to_choose_from[i_part];  // PID - electron = 11
+            temp->idhep=particle_types_available[i_part];  // PID - electron = 11
             temp->jmohep[0]=0; // Position of mother particle in list.
             temp->jmohep[1]=0; // Position of second mother particle in list.
             temp->jdahep[0]=0; // Position of daughter particle in list.
