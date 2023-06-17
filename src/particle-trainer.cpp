@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
     std::uniform_real_distribution<> y_dis(y_min,y_max);
     std::uniform_real_distribution<> one(0.,1.);
     std::uniform_int_distribution<>  choose_num(1,nmax);
-    std::uniform_int_distribution<>  choose_part(0, (int)particle_indexes_to_choose_from.size());
+    std::uniform_int_distribution<>  choose_part(0, (int)particle_indexes_to_choose_from.size()-1);
 
     for(int i=0; i < nevent; ++i){
 
