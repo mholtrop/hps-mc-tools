@@ -31,6 +31,7 @@ int main(int argc, char **argv) {
                ("d,debug", "Set debug level", cxxopts::value<int>()->default_value("0"))
                ("o,outputfile", "Output file.", cxxopts::value<std::string>()->default_value("mumu.stdhep"))
                ("i,inputfile", "Input text file, -i is optional.", cxxopts::value<std::string>()->default_value("mumu.stdhep"))
+               ("n,nevent","Number of events per output file.", cxxopts::value<long>()->default_value("0"))
                ("h,help", "Print help");
 
    options.parse_positional({"inputfile"});
@@ -51,7 +52,7 @@ int main(int argc, char **argv) {
       return(1);
    }
 
-   long nevent;
+   long num_event_in_file;
    // We need to know the number of events in the input file for StdHEP output file.
    // Line 10 of input file has "#Number_of_events   10000".
    string line;
@@ -64,91 +65,116 @@ int main(int argc, char **argv) {
       if( debug >1) cout << "::" << line << endl;
       size_t n_loc;
       if( (n_loc = line.find("Number_of_events") ) != std::string::npos){
-         nevent = atoi(line.substr(18).c_str());
-         if( nevent < 1){
+         num_event_in_file = atoi(line.substr(18).c_str());
+         if(num_event_in_file < 1){
             cout << "Input file parsing failed to find Number_of_events.\n";
             return(1);
          }
-         if( debug ) cout << "The file has " << nevent << " events.\n";
+         if( debug ) cout << "The file has " << num_event_in_file << " events.\n";
       }
       if ( (n_loc = line.find("#Events") ) != std::string::npos){
          done = true;
       }
    }
 
-   // Open the stdhep file.
-   int ostream = 0;
-   string outputfile = args["outputfile"].as<std::string>();
-   open_write((char *)outputfile.c_str(),ostream,nevent);
+   long nevent = args["nevent"].as<long>();
+   int n_out_files = 1;
+   if(nevent>0) {
+      int over_flow = (num_event_in_file%nevent > 0);
+      n_out_files = int(num_event_in_file / nevent) + over_flow;
+   }else{
+      nevent = ((1UL)<<63)-1;
+   }
 
-   // Read and parse each line from the file.
    int lines_read = 0;
-   stringstream ss;
-   stdhep_event evt;
-   struct stdhep_entry *temp = new struct stdhep_entry;
-   double xtmp, px, py, pz;
-   double electron_mass = 0.51099895e-3; // e- mass in GeV.
-   double muon_mass = 0.1056583755;      // muon mass in GeV.
+   for(int i_out_file=0;i_out_file < n_out_files; ++i_out_file) {
+      // Open the stdhep file.
+      int ostream = 0;
+      string outputfile;
+      if(n_out_files == 1){
+         outputfile = args["outputfile"].as<std::string>();
+      }else{
+         string tmpf = args["outputfile"].as<std::string>();
+         size_t loc = tmpf.rfind(".stdhep");
+         char buffer[256];
+         snprintf(buffer, 256, "%s_%03d.stdhep", tmpf.substr(0, loc).c_str(), i_out_file);
+         outputfile = buffer;
+      }
+      open_write((char *) outputfile.c_str(), ostream, num_event_in_file);
 
-   // For all particles all events:
-   temp->jmohep[0]=0; // Position of mother particle in list.
-   temp->jmohep[1]=0; // Position of second mother particle in list.
-   temp->jdahep[0]=0; // Position of daughter particle in list.
-   temp->jdahep[1]=0;
-   temp->vhep[0]= 0; // Vertex-x;
-   temp->vhep[1]= 0; // Vertex-y;
-   temp->vhep[2]= 0; // Vertex-z;
-   temp->vhep[3]= 0; // Production time;
-   temp->isthep=1;  // Final state particle.
+      // Read and parse each line from the file.
 
-   while(getline(in_file, line)) {
-      ++lines_read;
-      ss.str(line);
-      evt.nevhep = lines_read;
-      ss >> xtmp ; // Event Weight, always = 1.
-      ss >> xtmp ; // Momentum of incoming electron.
-      ss >> xtmp ; // Momentun of nucleus ~ 0.
+      stringstream ss;
+      stdhep_event evt;
+      struct stdhep_entry *temp = new struct stdhep_entry;
+      double xtmp, px, py, pz;
+      double electron_mass = 0.51099895e-3; // e- mass in GeV.
+      double muon_mass = 0.1056583755;      // muon mass in GeV.
 
-      temp->idhep=11;  // PID - electron = 11
-      ss >> px;
-      temp->phep[0] = px; // Momentum-x;
-      ss >> py;
-      temp->phep[1] = py; // Momentum-y;
-      ss >> pz;
-      temp->phep[2]= pz; // Momentum-z;
-      temp->phep[3]= sqrt(px*px+py*py+pz*pz+ electron_mass*electron_mass); // Energy;
-      temp->phep[4]= electron_mass; // Mass;
-      evt.particles.push_back(*temp);
+      // For all particles all events:
+      temp->jmohep[0] = 0; // Position of mother particle in list.
+      temp->jmohep[1] = 0; // Position of second mother particle in list.
+      temp->jdahep[0] = 0; // Position of daughter particle in list.
+      temp->jdahep[1] = 0;
+      temp->vhep[0] = 0; // Vertex-x;
+      temp->vhep[1] = 0; // Vertex-y;
+      temp->vhep[2] = 0; // Vertex-z;
+      temp->vhep[3] = 0; // Production time;
+      temp->isthep = 1;  // Final state particle.
 
-      temp->idhep=13;  // PID - mu- = 13
-      ss >> px;
-      temp->phep[0] = px; // Momentum-x;
-      ss >> py;
-      temp->phep[1] = py; // Momentum-y;
-      ss >> pz;
-      temp->phep[2]= pz; // Momentum-z;
-      temp->phep[3]= sqrt(px*px+py*py+pz*pz+ muon_mass*muon_mass); // Energy;
-      temp->phep[4]= muon_mass; // Mass;
-      evt.particles.push_back(*temp);
+      int n_evt_this_file = 0;
+      while(n_evt_this_file < nevent && getline(in_file, line)) {
+         ++lines_read;
+         ++n_evt_this_file;
+         ss.str(line);
+         evt.nevhep = lines_read;
+         ss >> xtmp; // Event Weight, always = 1.
+         ss >> xtmp; // Momentum of incoming electron.
+         ss >> xtmp; // Momentun of nucleus ~ 0.
 
-      temp->idhep=-13;  // PID - mu+ = -13
-      ss >> px;
-      temp->phep[0] = px; // Momentum-x;
-      ss >> py;
-      temp->phep[1] = py; // Momentum-y;
-      ss >> pz;
-      temp->phep[2]= pz; // Momentum-z;
-      temp->phep[3]= sqrt(px*px+py*py+pz*pz+ muon_mass*muon_mass); // Energy;
-      temp->phep[4]= muon_mass; // Mass;
-      evt.particles.push_back(*temp);
+         temp->idhep = 11;  // PID - electron = 11
+         ss >> px;
+         temp->phep[0] = px; // Momentum-x;
+         ss >> py;
+         temp->phep[1] = py; // Momentum-y;
+         ss >> pz;
+         temp->phep[2] = pz; // Momentum-z;
+         temp->phep[3] = sqrt(px * px + py * py + pz * pz + electron_mass * electron_mass); // Energy;
+         temp->phep[4] = electron_mass; // Mass;
+         evt.particles.push_back(*temp);
 
-      write_stdhep(&evt);
-      write_file(ostream);
+         temp->idhep = 13;  // PID - mu- = 13
+         ss >> px;
+         temp->phep[0] = px; // Momentum-x;
+         ss >> py;
+         temp->phep[1] = py; // Momentum-y;
+         ss >> pz;
+         temp->phep[2] = pz; // Momentum-z;
+         temp->phep[3] = sqrt(px * px + py * py + pz * pz + muon_mass * muon_mass); // Energy;
+         temp->phep[4] = muon_mass; // Mass;
+         evt.particles.push_back(*temp);
+
+         temp->idhep = -13;  // PID - mu+ = -13
+         ss >> px;
+         temp->phep[0] = px; // Momentum-x;
+         ss >> py;
+         temp->phep[1] = py; // Momentum-y;
+         ss >> pz;
+         temp->phep[2] = pz; // Momentum-z;
+         temp->phep[3] = sqrt(px * px + py * py + pz * pz + muon_mass * muon_mass); // Energy;
+         temp->phep[4] = muon_mass; // Mass;
+         evt.particles.push_back(*temp);
+
+         write_stdhep(&evt);
+         write_file(ostream);
+      }
+      close_write(ostream);
    }
+
    if(debug ) cout << "Read " << lines_read << " lines from file.\n";
-   if( lines_read != nevent){
-      cout << "WARNING!! -- Different number of lines read than expected " << nevent << " != "<< lines_read <<" \n";
+   if(lines_read != num_event_in_file){
+      cout << "WARNING!! -- Different number of lines read than expected " << num_event_in_file << " != " << lines_read << " \n";
    }
-   close_write(ostream);
+
    return 0;
 }
