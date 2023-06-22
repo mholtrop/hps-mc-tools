@@ -35,6 +35,9 @@ add_executable(particle-trainer src/particle-trainer.cpp stdhep-tools/src/stdhep
 target_link_libraries(particle-trainer stdhepC mcfio)
 install(TARGETS particle-trainer)
 
+add_executable(mumu_translate src/mumu_translate.cpp stdhep-tools/src/stdhep_util.cpp)
+target_link_libraries(mumu_translate stdhepC mcfio)
+install(TARGETS mumu_translate)
 
 add_executable(particle-gun src/particle-gun.cpp stdhep-tools/src/stdhep_util.cpp)
 target_link_libraries(particle-gun stdhepC mcfio)
