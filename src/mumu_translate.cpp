@@ -15,6 +15,14 @@
 #include <cmath>
 using namespace std;
 
+void rotate_beam(double tht, double &x, double &z){
+   // Rotate the beam vector x and z component around the y-axis by theta.
+   double xp = cos(tht)*x + sin(tht)*z;
+   double zp = -sin(tht)*x + cos(tht)*z;
+   x = xp;
+   z = zp;
+}
+
 int main(int argc, char **argv) {
 
    setlocale(LC_NUMERIC, "");
@@ -32,6 +40,8 @@ int main(int argc, char **argv) {
                ("o,outputfile", "Output file.", cxxopts::value<std::string>()->default_value("mumu.stdhep"))
                ("i,inputfile", "Input text file, -i is optional.", cxxopts::value<std::string>()->default_value("mumu.stdhep"))
                ("n,nevent","Number of events per output file.", cxxopts::value<long>()->default_value("0"))
+               ("r,rotate","Rotate all vectors around the y-axis in the x-y plane by given angle in mrad. [30.5]",
+                     cxxopts::value<double>()->default_value("30.5"))
                ("h,help", "Print help");
 
    options.parse_positional({"inputfile"});
@@ -44,6 +54,7 @@ int main(int argc, char **argv) {
    }
 
    int debug = args["debug"].as<int>();
+   auto beam_rot = args["rotate"].as<double>()/1000.;
 
    string inputfile = args["inputfile"].as<std::string>();
    ifstream in_file(inputfile);
@@ -77,7 +88,7 @@ int main(int argc, char **argv) {
       }
    }
 
-   long nevent = args["nevent"].as<long>();
+   auto nevent = args["nevent"].as<long>();
    int n_out_files = 1;
    if(nevent>0) {
       int over_flow = (num_event_in_file%nevent > 0);
@@ -134,10 +145,13 @@ int main(int argc, char **argv) {
 
          temp->idhep = 11;  // PID - electron = 11
          ss >> px;
-         temp->phep[0] = px; // Momentum-x;
          ss >> py;
-         temp->phep[1] = py; // Momentum-y;
          ss >> pz;
+
+         rotate_beam(beam_rot, px, pz);
+         //
+         temp->phep[0] = px; // Momentum-x;
+         temp->phep[1] = py; // Momentum-y;
          temp->phep[2] = pz; // Momentum-z;
          temp->phep[3] = sqrt(px * px + py * py + pz * pz + electron_mass * electron_mass); // Energy;
          temp->phep[4] = electron_mass; // Mass;
@@ -145,10 +159,12 @@ int main(int argc, char **argv) {
 
          temp->idhep = 13;  // PID - mu- = 13
          ss >> px;
-         temp->phep[0] = px; // Momentum-x;
          ss >> py;
-         temp->phep[1] = py; // Momentum-y;
          ss >> pz;
+         rotate_beam(beam_rot, px, pz);
+
+         temp->phep[0] = px; // Momentum-x;
+         temp->phep[1] = py; // Momentum-y;
          temp->phep[2] = pz; // Momentum-z;
          temp->phep[3] = sqrt(px * px + py * py + pz * pz + muon_mass * muon_mass); // Energy;
          temp->phep[4] = muon_mass; // Mass;
@@ -156,10 +172,12 @@ int main(int argc, char **argv) {
 
          temp->idhep = -13;  // PID - mu+ = -13
          ss >> px;
-         temp->phep[0] = px; // Momentum-x;
          ss >> py;
-         temp->phep[1] = py; // Momentum-y;
          ss >> pz;
+         rotate_beam(beam_rot, px, pz);
+
+         temp->phep[0] = px; // Momentum-x;
+         temp->phep[1] = py; // Momentum-y;
          temp->phep[2] = pz; // Momentum-z;
          temp->phep[3] = sqrt(px * px + py * py + pz * pz + muon_mass * muon_mass); // Energy;
          temp->phep[4] = muon_mass; // Mass;
