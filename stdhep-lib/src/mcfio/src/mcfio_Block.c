@@ -91,8 +91,8 @@ int mcfioC_Block(int stream, int blkid,
            if (str->ehead->blockIds[i] == blkid) j = i;
         }
       if (j == -1) {
-        fprintf(stderr,
- " mcfio_Block: Unable to find block i.d. %d in Stream %d \n", blkid, stream);
+        /* fprintf(stderr,
+ " mcfio_Block: Unable to find block i.d. %d in Stream %d \n", blkid, stream); */
           return -1;  
       }
       if (xdr_setpos(str->xdr,str->ehead->ptrBlocks[j]) == FALSE) {

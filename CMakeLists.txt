@@ -8,7 +8,7 @@ cmake_policy(SET CMP0042 NEW)
 # Set the name of the project
 project(hps-mc-tools)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -23,6 +23,14 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 find_package(LCIO REQUIRED)
 include_directories( AFTER "${LCIO_INCLUDE_DIR}")
 
+find_package(ROOT REQUIRED)
+##---Define useful ROOT functions and macros (e.g. ROOT_GENERATE_DICTIONARY)
+message(STATUS "ROOT_USE_FILE: ${ROOT_USE_FILE}")
+#include(${ROOT_USE_FILE})  # This interferes with StdHep -- figure out what later.
+include_directories(${ROOT_INCLUDE_DIRS})
+link_directories(${ROOT_LIBRARY_DIR})
+message(STATUS "ROOT found at: ${ROOT_DIR}")
+
 add_subdirectory(stdhep-lib)
 include_directories(stdhep-lib/src/src/inc stdhep-tools/src)
 
@@ -30,6 +38,9 @@ add_executable(stdhep-print src/stdhep_print.cpp stdhep-tools/src/stdhep_util.cp
 target_link_libraries(stdhep-print stdhepC mcfio)
 install(TARGETS stdhep-print)
 
+add_executable(stdhep2root src/stdhep2root.cpp stdhep-tools/src/stdhep_util.cpp)
+target_link_libraries(stdhep2root stdhepC mcfio ${ROOT_LIBRARIES})
+install(TARGETS stdhep2root)
 
 add_executable(particle-trainer src/particle-trainer.cpp stdhep-tools/src/stdhep_util.cpp)
 target_link_libraries(particle-trainer stdhepC mcfio)
