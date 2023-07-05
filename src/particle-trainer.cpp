@@ -53,11 +53,12 @@ int main(int argc, char **argv) {
                     ("nmax",  "Set max number of particles per event.", cxxopts::value<int>()->default_value("1"))
                     ("pmin",  "Set minimum momentum.", cxxopts::value<double>()->default_value("0.01"))
                     ("pmax",  "Set maximum momentum.", cxxopts::value<double>()->default_value("4.6"))
-                    ("xmin",  "Set minimum x at 150cm (Ecal).", cxxopts::value<double>()->default_value("-45."))
-                    ("xmax",  "Set maximum x at 150cm (Ecal).", cxxopts::value<double>()->default_value("45."))
-                    ("ymin",  "Set minimum y at 150cm (Ecal).", cxxopts::value<double>()->default_value("1."))
-                    ("ymax",  "Set maximum y at 150cm (Ecal).", cxxopts::value<double>()->default_value("10."))
-                    ("rot",   "Set beam rotation.", cxxopts::value<double>()->default_value("32.5"))
+                    ("xmin",  "Set minimum x at 150cm (Ecal).", cxxopts::value<double>()->default_value("-60."))
+                    ("xmax",  "Set maximum x at 150cm (Ecal).", cxxopts::value<double>()->default_value("60."))
+                    ("ymin",  "Set minimum y at 150cm (Ecal).", cxxopts::value<double>()->default_value("0.3"))
+                    ("ymax",  "Set maximum y at 150cm (Ecal).", cxxopts::value<double>()->default_value("15."))
+                    ("rot",   "Set beam rotation.", cxxopts::value<double>()->default_value("30.5"))
+                    ("seed",  "Set random seed", cxxopts::value<long>()->default_value("0"))
 
                     ("o,outputfile", "Output files (-o is optional) ", cxxopts::value<std::string>()->default_value("gun.stdhep"))
                     ("n,num_evt","Only process num_evt event [default:100000]", cxxopts::value<long>()->default_value("100000"))
@@ -110,13 +111,21 @@ int main(int argc, char **argv) {
 
     // Seed with a real random value, if available
     std::random_device rd;  //Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+
+    long seed = args["seed"].as<long>();;
+    if(seed == 0) seed = rd();
+    if( debug == 1) printf("Seed = %ld \n", seed);
+    std::mt19937 gen(seed); //Standard mersenne_twister_engine seeded with rd()
     std::uniform_real_distribution<> momentum_dis(momentum_low, momentum_max);
     std::uniform_real_distribution<> x_dis(x_min,x_max);
     std::uniform_real_distribution<> y_dis(y_min,y_max);
     std::uniform_real_distribution<> one(0.,1.);
     std::uniform_int_distribution<>  choose_num(1,nmax);
     std::uniform_int_distribution<>  choose_part(0, (int)particle_indexes_to_choose_from.size()-1);
+
+    if(debug == 1){
+       printf("Random x = %f  y = %f \n",x_dis(gen), y_dis(gen));
+    }
 
     for(int i=0; i < nevent; ++i){
 
@@ -135,10 +144,10 @@ int main(int argc, char **argv) {
             double px = momentum*sin(theta)*cos(phi);
             double py = momentum*sin(theta)*sin(phi);
             double pz = momentum*cos(theta);
-            px = px*cos(rot/1000.) + pz*sin(rot/1000.);
-            pz = -px*sin(rot/1000.) + pz*cos(rot/1000.);
-            double theta_x    = atan2(x,150.) + rot/1000.;  // theta=arccos(z/r) rotated 32.5 mrad to +x
-            double theta_y    = atan2(y,150.);
+            double px_tmp = px*cos(rot/1000.) + pz*sin(rot/1000.);
+            double pz_tmp = -px*sin(rot/1000.) + pz*cos(rot/1000.);
+            px = px_tmp;
+            pz = pz_tmp;
 
             temp->isthep=1;  // Final state particle.
             temp->idhep=particle_types_available[i_part];  // PID - electron = 11
@@ -150,9 +159,9 @@ int main(int argc, char **argv) {
             temp->vhep[1]= 0; // Vertex-y;
             temp->vhep[2]= 0; // Vertex-z;
             temp->vhep[3]= 0; // Production time;
-            temp->phep[0]= px; // Momentum-x = momentum*sin(theta)*cos(phi);
-            temp->phep[1]= py; // Momentum-y = momentum*sin(theta)*sin(phi);
-            temp->phep[2]= pz; // Momentum-z = momentum*cos(theta);
+            temp->phep[0]= px; // Momentum-x
+            temp->phep[1]= py; // Momentum-y
+            temp->phep[2]= pz; // Momentum-z
             temp->phep[3]= sqrt(momentum*momentum+part_mass*part_mass); // Energy;
             temp->phep[4]= part_mass; // Mass;
             if(debug>0) printf("(x,y): (%7.2f, %7.2f)  (tht,phi): (%7.3f, %7.3f) p=(%7.3f, %7.3f, %7.3f)\n",
