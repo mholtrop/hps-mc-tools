@@ -116,8 +116,9 @@ int StdHepXdrReadOpen(char *filename, int ntries, int ist)
     fprintf(stdout,"          date: %s\n",stdhd1_.date);
     fprintf(stdout,"                    %d events\n",ntries);
     fprintf(stdout,"                    %d blocks per event\n",stdhd2_.numblocks);
-    return 0;
+    return ntries;
 }
+
 int StdHepXdrReadOpenNTries(char *filename, int *ntries, int ist)
 {
     int istream, iblk;

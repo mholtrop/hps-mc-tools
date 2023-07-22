@@ -42,6 +42,10 @@ add_executable(stdhep2root src/stdhep2root.cpp stdhep-tools/src/stdhep_util.cpp)
 target_link_libraries(stdhep2root stdhepC mcfio ${ROOT_LIBRARIES})
 install(TARGETS stdhep2root)
 
+add_executable(stdhep_split src/stdhep_split.cpp stdhep-tools/src/stdhep_util.cpp)
+target_link_libraries(stdhep_split stdhepC mcfio)
+install(TARGETS stdhep_split)
+
 add_executable(particle-trainer src/particle-trainer.cpp stdhep-tools/src/stdhep_util.cpp)
 target_link_libraries(particle-trainer stdhepC mcfio)
 install(TARGETS particle-trainer)

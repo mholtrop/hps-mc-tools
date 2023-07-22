@@ -148,15 +148,16 @@ int append_stdhep(vector<stdhep_entry> *event, const vector<stdhep_entry> *new_e
 
 int open_read(char *filename, int istream, int n_events)
 {
+   int nevt_in_file = 0;
 	printf("Reading from %s; expecting %d events\n",filename,n_events);
 	if (xdr_init_done)
-		StdHepXdrReadOpen(filename,n_events,istream);
+		nevt_in_file = StdHepXdrReadOpen(filename,n_events,istream);
 	else
 	{
-		StdHepXdrReadInit(filename,n_events,istream);
+      nevt_in_file = StdHepXdrReadInit(filename,n_events,istream);
 		xdr_init_done = true;
 	}
-	return n_events;
+	return nevt_in_file;
 }
 
 void open_write(char *filename, int ostream, int n_events)
