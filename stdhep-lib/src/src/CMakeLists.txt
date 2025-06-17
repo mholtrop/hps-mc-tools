@@ -1,5 +1,6 @@
 project(stdhep)
 
+add_compile_options(-Wno-error=incompatible-function-pointer-types)
 get_property(mcfio_Include TARGET mcfio PROPERTY INCLUDE_DIRECTORIES)
 
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/inc)

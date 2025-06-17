@@ -26,6 +26,7 @@
 #include <sys/param.h>
 #include <rpc/types.h>
 #include <sys/types.h>
+#include <rpc/types.h>
 #include <rpc/xdr.h>
 #include <limits.h>
 #ifdef SUNOS
