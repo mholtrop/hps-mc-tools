@@ -13,6 +13,7 @@ int main(int argc, char **argv) {
 
    // Define the Tuple variables.
    vector<int> pdg;
+   vector<int> status;
    vector<double> px,py,pz;
    vector<double> vx,vy,vz;
    vector<double> energy;
@@ -66,6 +67,7 @@ int main(int argc, char **argv) {
    output_tree->Branch("vx", &vx);
    output_tree->Branch("vy", &vy);
    output_tree->Branch("vz", &vz);
+   output_tree->Branch("status", &status);
 
    long nevt=0;
 
@@ -85,6 +87,7 @@ int main(int argc, char **argv) {
          vz.clear();
          energy.clear();
          mass.clear();
+         status.clear();
 
          read_stdhep(&event);
 
@@ -98,6 +101,7 @@ int main(int argc, char **argv) {
             vx.push_back(event.particles[j].vhep[0]);
             vy.push_back(event.particles[j].vhep[1]);
             vz.push_back(event.particles[j].vhep[2]);
+            status.push_back(event.particles[j].isthep);
          }
 
          output_tree->Fill();
